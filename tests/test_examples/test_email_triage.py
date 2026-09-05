@@ -37,6 +37,11 @@ from harness.evaluators import EvalStatus, JudgeEvaluator, SchemaEvaluator
 from harness.prompts import get_rubric
 from harness.tracing import TraceWriter
 
+# WHY a different model family as judge: independence. A model evaluating
+# its own output shows confirmation bias. Qwen generates, GPT-OSS judges —
+# different training lineages, genuinely independent verdicts.
+JUDGE_MODEL = "openai/gpt-oss-120b"
+
 
 # =============================================================================
 # The contract : what shape we expect the LLM to produce
@@ -129,9 +134,9 @@ def test_email_triage_with_schema_and_judge() -> None:
     trace_writer.write_evaluation(test_name=test_name, result=schema_result)
 
     # ----- Step 3: judge evaluation on accuracy (probabilistic, cheap, LLM call) -----
-    with GeminiClient() as gemini:
+    with GroqClient(default_model=JUDGE_MODEL) as judge_client:
         judge_evaluator = JudgeEvaluator(
-            client=gemini,
+            client=judge_client,
             rubric=get_rubric("accuracy"),
             threshold=0.75,
         )

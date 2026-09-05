@@ -159,9 +159,9 @@ def test_negative_judge_failure_when_sut_produces_misleading_summary() -> None:
     trace_writer.write_evaluation(test_name=test_name, result=schema_result)
 
     # ----- Judge check (should FAIL — summary is misleading) -----
-    with GeminiClient() as gemini:
+    with GroqClient() as judeg_client:
         judge_evaluator = JudgeEvaluator(
-            client=gemini,
+            client=judeg_client,
             rubric=get_rubric("accuracy"),
             threshold=0.75,
         )

@@ -32,8 +32,8 @@ class Settings(BaseSettings):
     gemini_api_key: SecretStr = Field(..., description="Google AI Studio API key")
 
     # ----- Default models -----
-    groq_model: str = Field(default="llama-3.3-70b-versatile")
-    gemini_model: str = Field(default="gemini-2.5-flash")
+    groq_model: str = Field(default="qwen/qwen3.8-27b")
+    gemini_model: str = Field(default="gemini-3.6-flash")
 
     # ----- Harness behavior -----
     # ----- Harness behavior -----

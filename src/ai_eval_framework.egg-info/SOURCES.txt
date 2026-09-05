@@ -14,6 +14,7 @@ src/harness/config/__init__.py
 src/harness/config/settings.py
 src/harness/evaluators/__init__.py
 src/harness/evaluators/base.py
+src/harness/evaluators/deepeval_adapter.py
 src/harness/evaluators/judge.py
 src/harness/evaluators/schema.py
 src/harness/prompts/__init__.py
