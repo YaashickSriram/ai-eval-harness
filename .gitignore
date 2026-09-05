@@ -1,0 +1,13 @@
+# Environment variables and virtual environments
+\.env
+\.venv
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Pytest cache
+.pytest_cache/
+
+# Trace artifacts
+traces/

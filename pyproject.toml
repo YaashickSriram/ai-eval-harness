@@ -1,0 +1,122 @@
+# =============================================================================
+# pyproject.toml
+# WHY: single source of truth for project metadata + tool config.
+# Standard Python project layout in 2026, anything older (setup.py, setup.cfg)
+# reads as dated to hiring managers.
+# =============================================================================
+
+[project]
+name = "ai-eval-framework"
+version = "0.1.0"
+description = "A pytest-based evaluation harness for LLM applications, with RAG and agent testing support."
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+    { name = "Yaashick" },
+]
+license = { text = "MIT" }
+keywords = ["llm", "evaluation", "testing", "rag", "agents", "pytest"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Testing",
+]
+
+dependencies = [
+    "pydantic>=2.6.0",                # WHY: settings + schema validation, industry standard
+    "pydantic-settings>=2.2.0",       # WHY: clean .env loading with type safety
+    "python-dotenv>=1.0.0",           # WHY: .env file support
+    "httpx>=0.27.0",                  # WHY: modern HTTP client, async-capable, what every LLM lib uses underneath
+    "tenacity>=8.2.0",                # WHY: retry logic for flaky LLM APIs (Day 2)
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=4.1.0",              # WHY: coverage in CI
+    "pytest-asyncio>=0.23.0",         # WHY: async LLM calls need this
+    "ruff>=0.3.0",                    # WHY: fast linter + formatter, replaces black/flake8/isort
+    "mypy>=1.9.0",                    # WHY: type checking — separates pros from amateurs
+]
+
+# =============================================================================
+# Ruff config — linting + formatting in one tool
+# =============================================================================
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort (import ordering)
+    "B",    # flake8-bugbear (likely bugs)
+    "UP",   # pyupgrade (modernize syntax)
+    "N",    # naming conventions
+    "SIM",  # simplifications
+]
+ignore = [
+    "E501",  # line too long — formatter handles it
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+# =============================================================================
+# Mypy config — strict-ish, but pragmatic
+# =============================================================================
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_unused_ignores = true
+warn_return_any = true
+show_error_codes = true
+ignore_missing_imports = true        # WHY: third-party libs without stubs shouldn't break us
+
+# =============================================================================
+# Pytest config
+# =============================================================================
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+addopts = [
+    "-ra",                            # WHY: show summary of all non-passing
+    "--strict-markers",               # WHY: typo'd markers should error, not silently skip
+    "--strict-config",
+    "-v",
+]
+markers = [
+    "smoke: smoke tests (fast, run first)",
+    "integration: tests that call real LLM APIs (cost real tokens)",
+    "adversarial: prompt injection and jailbreak tests",
+    "regression: golden dataset regression tests",
+]
+
+[tool.coverage.run]
+source = ["src"]
+branch = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
+]
+
+# =============================================================================
+# Build system - needed even though we don't publish to PyPI
+# =============================================================================
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]

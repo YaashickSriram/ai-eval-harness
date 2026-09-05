@@ -1,0 +1,48 @@
+# =============================================================================
+# .github/workflows/ci.yml — runs on every push and PR
+#
+# WHY this is minimal: we run lint + types + unit tests in CI on every change.
+# Integration tests (which cost real tokens) run only on a separate manually-
+# triggered workflow we'll add on Day 3. Cost discipline from day one.
+# =============================================================================
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  quality:
+    name: Lint, type-check, unit tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Ruff lint
+        run: ruff check src tests
+
+      - name: Ruff format check
+        run: ruff format --check src tests
+
+      - name: Mypy type check
+        run: mypy src
+
+      - name: Run unit tests
+        # WHY -m "not integration": skip tests that need real API keys.
+        # Those run in a separate workflow with secrets configured.
+        run: pytest -m "not integration" -v

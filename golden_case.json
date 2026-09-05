@@ -1,0 +1,19 @@
+{
+  "id": "gc-047",
+  "input": {
+    "transcript": "...",
+    "language": "en-SG",
+    "product": "term_life",
+    "call_stage": "objection_handling"
+  },
+  "expected": {
+    "must_contain_concepts": ["price objection acknowledged", "value reframe"],
+    "must_not_contain": ["guaranteed returns"],
+    "schema": "coaching_feedback_v3",
+    "score_range": [5, 8]
+  },
+  "reference_output": "…optional, for similarity scoring…",
+  "tags": ["objection", "compliance-sensitive", "regression:BUG-2291"],
+  "source": "production_anonymised",
+  "added": "2026-08-14"
+}
