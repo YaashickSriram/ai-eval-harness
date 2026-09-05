@@ -1,26 +1,26 @@
 # AI Evaluation Harness
 
-A pytest-based evaluation harness for testing LLM applications — provider-agnostic, multi-layer evaluation, with full audit traces.
+A pytest-based evaluation harness for testing LLM applications  provider-agnostic, multi-layer evaluation, with full audit traces.
 
 ## Why this exists
 
 Testing AI systems is different from testing traditional software:
 
 - **Outputs are non-deterministic.** Same prompt → varying responses. Exact-match assertions don't work.
-- **Quality is multi-dimensional.** "Is the response good?" splits into relevance, accuracy, tone, schema compliance, safety — different evaluators for different concerns.
+- **Quality is multi-dimensional.** "Is the response good?" splits into relevance, accuracy, tone, schema compliance, safety : different evaluators for different concerns.
 - **Failures need rationale.** A test that says "score: 0.4" is useless. A test that says "the response misclassified urgency as 'low' despite the user stating 'TODAY'" is actionable.
 
 This harness handles all three.
 
 ## What it does
 
-- **Provider-agnostic LLM client layer** — swap between Groq, Gemini, or any future provider with a one-line config change.
+- **Provider-agnostic LLM client layer** : swap between Groq, Gemini, or any future provider with a one-line config change.
 - **Two evaluator types out of the box:**
-  - `SchemaEvaluator` — deterministic JSON / Pydantic validation. Fast, cheap, no LLM calls.
-  - `JudgeEvaluator` — LLM-as-judge with structured rubrics (relevance, accuracy, tone). Catches quality issues that schema can't.
-- **PASS / FAIL / ERROR distinction** — separates "response was bad" from "evaluator itself failed." Critical when judges are flaky.
-- **Trace capture** — every LLM call and evaluation written as a JSON file. Full audit trail, drift-ready.
-- **Two realistic examples** — positive case (good triage) and negative cases (sabotaged prompts the harness catches).
+  - `SchemaEvaluator` : deterministic JSON / Pydantic validation. Fast, cheap, no LLM calls.
+  - `JudgeEvaluator` : LLM-as-judge with structured rubrics (relevance, accuracy, tone). Catches quality issues that schema can't.
+- **PASS / FAIL / ERROR distinction** : separates "response was bad" from "evaluator itself failed." Critical when judges are flaky.
+- **Trace capture** : every LLM call and evaluation written as a JSON file. Full audit trail, drift-ready.
+- **Two realistic examples** : positive case (good triage) and negative cases (sabotaged prompts the harness catches).
 
 ## See it work in 60 seconds
 
@@ -28,14 +28,14 @@ This harness handles all three.
 # Install
 pip install -e ".[dev]"
 
-# Set up API keys (free tiers — no credit card)
+# Set up API keys (free tiers : no credit card)
 cp .env.example .env
 # edit .env with your Groq + Gemini keys
 
-# Run the positive case — Gemini judges Groq's output on a real triage task
+# Run the positive case : Gemini judges Groq's output on a real triage task
 pytest tests/test_examples/test_email_triage.py -v -s
 
-# Run the negative cases — watch the harness catch deliberately bad output
+# Run the negative cases : watch the harness catch deliberately bad output
 pytest tests/test_examples/test_email_triage_negative.py -v -s
 
 # All unit tests (no network)
@@ -48,7 +48,7 @@ The integration tests print full demo output: the input, the SUT response, the e
 
 ```
 ======================================================================
-CUSTOMER EMAIL TRIAGE — Harness
+CUSTOMER EMAIL TRIAGE : Harness
 ======================================================================
 
 INPUT EMAIL:
@@ -84,7 +84,7 @@ This is what AI testing looks like when the evaluator explains its reasoning.
 ```
 src/harness/
 ├── clients/        Provider-agnostic LLM clients (Groq, Gemini, future: Ollama/Anthropic)
-├── config/         Pydantic Settings — type-safe .env loading with SecretStr
+├── config/         Pydantic Settings : type-safe .env loading with SecretStr
 ├── evaluators/     Evaluator Protocol + Schema + Judge implementations
 ├── prompts/        Rubric registry (relevance, accuracy, tone)
 └── tracing/        JSON trace writer for every LLM call and evaluation
@@ -109,18 +109,18 @@ Every layer is provider-agnostic and structured for composition. Adding a third 
 
 Built so far: core abstractions, two evaluator types, trace capture, working examples.
 
-Designed but not yet built — prioritized for the next phase:
+Designed but not yet built : prioritized for the next phase:
 
-- **Cost & latency dashboards** — aggregate token usage across runs
-- **Retry with backoff** — handle rate limits and transient API failures
-- **Semantic similarity evaluator** — embedding-based "is this close to expected"
-- **Golden datasets + regression suite** — track quality over time
-- **Calibration tooling** — measure judge agreement with human grading
-- **Ollama as third provider** — fully-local fallback for offline/sensitive data
-- **RAG evaluation** — groundedness and citation-faithfulness checks
-- **Agent evaluation** — tool-call correctness, multi-turn coherence
+- **Cost & latency dashboards** : aggregate token usage across runs
+- **Retry with backoff** : handle rate limits and transient API failures
+- **Semantic similarity evaluator** : embedding-based "is this close to expected"
+- **Golden datasets + regression suite** : track quality over time
+- **Calibration tooling** : measure judge agreement with human grading
+- **Ollama as third provider** : fully-local fallback for offline/sensitive data
+- **RAG evaluation** : groundedness and citation-faithfulness checks
+- **Agent evaluation** : tool-call correctness, multi-turn coherence
 
-The architecture supports all of these as additive modules — none require refactoring existing code.
+The architecture supports all of these as additive modules : none require refactoring existing code.
 
 ## A note on the `HARNESS_INSECURE_SKIP_TLS_VERIFY` flag
 
@@ -130,7 +130,7 @@ If you run this in a corporate network with SSL inspection (Zscaler, Netskope, e
 HARNESS_INSECURE_SKIP_TLS_VERIFY=true
 ```
 
-in `.env`. The harness emits a runtime warning whenever this flag is active. Never set this in production — the proper fix is to install the corporate CA via `SSL_CERT_FILE` / `REQUESTS_CA_BUNDLE`.
+in `.env`. The harness emits a runtime warning whenever this flag is active. Never set this in production : the proper fix is to install the corporate CA via `SSL_CERT_FILE` / `REQUESTS_CA_BUNDLE`.
 
 ## Stack
 
